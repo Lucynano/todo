@@ -9,25 +9,22 @@ import TODOList from "@/components/TODOList";
 function Home() {
     const [todos, setTodos] = React.useState([]);
 
+    // Retrieve data from localStorage when component mounts
     React.useEffect(() => {
-        setTodos([
-            {
-                title: "Some task", 
-                id: crypto.randomUUID(), 
-                is_completed: false,
-            },
-            {
-                title: "Some other task", 
-                id: crypto.randomUUID(), 
-                is_completed: true,
-            },
-            {
-                title: "Last task", 
-                id: crypto.randomUUID(), 
-                is_completed: false,
-            },
-        ]);
+        const storedTodos = localStorage.getItem("todos");
+        if (storedTodos) {
+            try {
+                const parsedTodos = JSON.parse(storedTodos);
+                if (Array.isArray(parsedTodos)) {
+                    setTodos(parsedTodos);
+                }
+            } catch (error) {
+                console.warn("Erreur lors du parsing de localStorage :", error);
+                localStorage.removeItem("todos"); // nettoie le stockage corrompu
+            }
+        }
     }, []);
+    
 
     const todos_completed = todos.filter(
         (todo) => todo.is_completed === true
@@ -39,7 +36,7 @@ function Home() {
         <div className="wrapper">
             <Header />
             <TODOHero todos_completed={todos_completed} total_todos={total_todos} />
-            <Form setTodos={setTodos} />
+            <Form todos={todos} setTodos={setTodos} />
             <TODOList todos={todos} setTodos={setTodos} />
         </div>
     );

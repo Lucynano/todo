@@ -1,14 +1,17 @@
 import React from "react";
 
-function Item({ item, setTodos }) {
+function Item({ item, todos, setTodos }) {
     const completeTodo = () => {
-        setTodos((prevTodos) =>
-            prevTodos.map((todo) => 
-                todo.id === item.id
-                    ? { ...todo, is_completed: !todo.is_completed }
-                    : todo
-            )
-        );
+        setTodos((prevTodos) => {
+            const updatedTodos = prevTodos.map((todo) => 
+                todo.id === item.id ? { ...todo, is_completed: !todo.is_completed } : todo
+            );
+
+            // Update localStorage after making todo as completed
+            localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
+            return updatedTodos;
+        });
     };
 
     // edit
@@ -35,10 +38,19 @@ function Item({ item, setTodos }) {
 
     const handleInputSubmit = (event) => {
         event.preventDefault();
+
+        // Update localStorage after editing todo
+        const updatedTodos = JSON.stringify(todos);
+        localStorage.setItem("todos", updatedTodos);
+
         setEditing(false);
     };
 
     const handleInputBlur = () => {
+        // Update localStorage after editing todo
+        const updatedTodos = JSON.stringify(todos);
+        localStorage.setItem("todos", updatedTodos);
+
         setEditing(false);
     };
 
@@ -53,6 +65,12 @@ function Item({ item, setTodos }) {
     // delete
     const handleDelete = () => {
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== item.id));
+
+        // Update localStorage after deleting todo
+        const updatedTodos = JSON.stringify(
+            todos.filter((todo) => todo.id !== item.id)
+        );
+        localStorage.setItem("todos", updatedTodos);
     };
 
     return (
@@ -137,7 +155,7 @@ function TODOList({ todos, setTodos }) {
     return (
         <ol className="todo_list">
             {todos && todos.length > 0 ? (
-                todos?.map((item, index) => <Item key={index} item={item} setTodos={setTodos} />)
+                todos?.map((item, index) => <Item key={index} item={item} todos={todos} setTodos={setTodos} />)
             ) : (
                 <p>Seems lonely in here, what are you up to?</p>
             )}
