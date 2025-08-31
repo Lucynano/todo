@@ -6,17 +6,12 @@ import TODOList from "@/components/TODOList";
 
 function Home() {
     return (
-        <html>
-            <body>
-                <div className="wrapper">
-                    <Header />
-                    <TODOHero todos_completed={0} total_todos={0} />
-                    <Form />
-                    <TODOList todos={[]} />
-                </div>
-            </body>
-        </html>
-
+        <div className="wrapper">
+            <Header />
+            <TODOHero todos_completed={0} total_todos={0} />
+            <Form />
+            <TODOList todos={[]} />
+        </div>
     );
 }
 
